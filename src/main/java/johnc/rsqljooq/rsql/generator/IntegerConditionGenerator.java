@@ -19,7 +19,8 @@ public class IntegerConditionGenerator implements ConditionGenerator<Field<Integ
     public Condition generate(Field<Integer> field, ComparisonNode node) {
         List<String> arguments = node.getArguments();
         try {
-            List<Integer> numbers = arguments.stream()
+            List<Integer> numbers = arguments
+                    .stream()
                     .map(Integer::parseInt)
                     .collect(Collectors.toList());
             return numericConditionEvaluator.evaluate(field, numbers, node.getOperator());

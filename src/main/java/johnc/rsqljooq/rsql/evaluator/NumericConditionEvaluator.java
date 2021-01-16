@@ -15,8 +15,9 @@ public class NumericConditionEvaluator<T> implements ConditionEvaluator<T> {
         T firstArgument = arguments.get(0);
         switch (RSQLSearch.getOperator(operator)) {
             case EQUAL:
-                return field.eq(firstArgument);
+                return field.equal(firstArgument);
             case NOT_EQUAL:
+                return field.notEqual(firstArgument);
             case GREATER_THAN:
                 return field.greaterThan(firstArgument);
             case GREATER_THAN_OR_EQUAL:
