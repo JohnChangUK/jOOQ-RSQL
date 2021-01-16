@@ -1,0 +1,123 @@
+buildscript {
+    ext {
+        springBootVersion = '2.4.1'
+        jooqVersion = '3.14.4'
+        postgresVersion = '42.2.14'
+        flywayVersion = '7.4.0'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE"
+        classpath 'nu.studer:gradle-jooq-plugin:4.1'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.4.1'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+    id 'nu.studer.jooq' version '4.1'
+}
+
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+apply plugin: "java"
+apply plugin: "nu.studer.jooq"
+
+group = 'johnc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.postgresql:postgresql:42.2.18'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'joda-time:joda-time:2.10.3'
+    implementation "org.jooq:jooq-codegen:$jooqVersion"
+    implementation 'cz.jirutka.rsql:rsql-parser:2.1.0'
+
+    jooqRuntime "org.postgresql:postgresql:$postgresVersion"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'src/generated/java']
+        }
+    }
+}
+
+// Jooq Code Gen
+jooq {
+    sample(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = 'jdbc:postgresql://localhost:5432/postgres'
+            user = 'postgres'
+            password = 'postgres'
+        }
+        generator {
+            generate {
+                javaTimeTypes = true
+                springAnnotations = true
+            }
+            strategy {
+                name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.postgres.PostgresDatabase'
+                inputSchema = 'public'
+                excludes = '.*flyway_schema_history'
+                includeTables = true
+                includeRoutines = false
+                includePackages = true
+                includePackageRoutines = true
+                includePackageUDTs = true
+                includePackageConstants = false
+                includeUDTs = true
+                includeSequences = false
+                includePrimaryKeys = false
+                includeUniqueKeys = false
+                includeForeignKeys = false
+                includeIndexes = false
+            }
+            target {
+                packageName = 'johnc.rsqljooq.jooq'
+                directory = 'src/generated/java'
+            }
+        }
+    }
+}
+
+tasks.generateSampleJooqSchemaSource.with {
+    def out = new ByteArrayOutputStream()
+    javaExecSpec = { JavaExecSpec s ->
+        s.standardOutput = out
+        s.errorOutput = out
+        s.ignoreExitValue = true
+    }
+    execResultHandler = { ExecResult r ->
+        if (r.exitValue != 0) {
+            throw RuntimeException('jOOQ codegen failed:\n\n' + out.toString())
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+generateSampleJooqSchemaSource.enabled = true

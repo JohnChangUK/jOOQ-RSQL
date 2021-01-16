@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: johnc-rsql-jooq
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: postgres
+    username: postgres
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: SELECT 1
+    max-active: 15
+    max-idle: 10
+    max-wait: 8000
+  jooq:
+    sql-dialect: POSTGRES
+
+    flyway:
+      enabled: true
+      baseline-on-migrate: true
