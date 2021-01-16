@@ -1,7 +1,8 @@
 ## [jOOQ](https://www.jooq.org/) - fluent API for typesafe, dynamic SQL
 ## [RSQL](https://github.com/jirutka/rsql-parser) - FIQL Parser
 
-### [Medium Article](https://medium.com/@johnchang94/jooq-with-rsql-fiql-parser-3c60f4f8b957) - Write up
+
+## [Medium Article](https://medium.com/@johnchang94/jooq-with-rsql-fiql-parser-3c60f4f8b957) - Write up
 
 ### This is a project to demonstrate the power of jOOQ along with RSQL; dynamically constructing SQL queries with many filters specified in the `WHERE` condition.
 # Reasons to use jOOQ
