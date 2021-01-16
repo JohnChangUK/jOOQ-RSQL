@@ -17,16 +17,6 @@ docker-compose up
 #### Run
 
 #### Example queries
-`http://localhost:8080/authors/search?filter=first_name==John`
-will translate to the SQL query
-```
-select 
-  "author"."first_name", 
-  "author"."last_name"
-from "author"
-where "author"."first_name" = 'John'
-```
-
 `http://localhost:8080/authors/search?filter=first_name==John,last_name==Sierra`
 will translate to the SQL query
 ```
@@ -50,5 +40,20 @@ from "author"
 where (
   "author"."first_name" = 'Bert'
   and "author"."last_name" = 'Bates'
+)
+```
+
+`http://localhost:8080/authors/search?filter=first_name==Bert,first_name=in=(JK, John)`
+will translate to the SQL query
+```
+select 
+  "author"."first_name", 
+  "author"."last_name"
+from "author"
+where (
+  "author"."first_name" = 'Bert'
+  or "author"."first_name" in (
+    'JK', 'John'
+  )
 )
 ```
