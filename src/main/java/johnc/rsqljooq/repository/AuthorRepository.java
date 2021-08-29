@@ -5,7 +5,6 @@ import johnc.rsqljooq.model.Author;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,22 +26,21 @@ public class AuthorRepository {
     }
 
     public List<Author> getAllAuthors() {
-        Result<Record> fetch = dsl
-                .select(authorTableContext.getAllFields())
+        return dsl.select(authorTableContext.getAllFields())
                 .from(AUTHOR)
-                .fetch();
-        return fetch.stream()
+                .fetch()
+                .stream()
                 .map(this::authorEntityToDto)
                 .collect(Collectors.toList());
     }
 
     public List<Author> getAllAuthorsWithSqlCondition(Condition condition) {
-        Result<Record> fetch = dsl
+        return dsl
                 .select(authorTableContext.getAllFields())
                 .from(AUTHOR)
                 .where(condition)
-                .fetch();
-        return fetch.stream()
+                .fetch()
+                .stream()
                 .map(this::authorEntityToDto)
                 .collect(Collectors.toList());
     }
